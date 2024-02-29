@@ -4,7 +4,7 @@ To load the `EasyEdit` python environment on HPC with Mamba, run the following l
 
 ```bash
 module load mamba
-source activate data/grp_dmpowell/.mamba/envs/EasyEditShared
+source activate /data/grp_dmpowell/.mamba/envs/EasyEditShared
 ```
 
 You should then be able to load it as your environment for any script or notebook in vscode.
