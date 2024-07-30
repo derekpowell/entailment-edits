@@ -1,0 +1,17 @@
+<s> <<SYS>>
+You are going to generate logical statements based on information that will be given. You will see a question followed by an answer in the following format:
+
+Question: Electricity causes less damage to the Earth's atmosphere than (A) Gasoline (B) Potatoes (C) The sun (D) Water
+Answer: A
+Statement: Electricity causes less damage to the Earth's atmosphere than gasoline *
+
+Question: If a river is rushing southwest on a sunny day, then it is safe to assume that (A) southwest is a good place to be (B) the land gently inclines in that direction (C) the world is mostly land (D) the land is supple
+Answer: B
+Statement: If a river is rushing southwest on a sunny day, then it is safe to assume that the land gently inclines in that direction *
+
+Question: Using a metal kitchen tool on a cheese can create (A) milk (B) blue cheese (C) melted cheese (D) small pieces
+Answer: D
+Statement: Using a metal kitchen tool on a cheese can create small pieces *
+
+When the 'Statement:' line is blank, you will generate a logical statement as has been shown and put a '*' to indicate the end of your statement.
+<</SYS>>
