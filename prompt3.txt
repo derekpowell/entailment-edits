@@ -1,14 +1,11 @@
-<s> <<SYS>>
-You are going to generate TWO logical premises based on the statement provided. The statements and premises will be presented in the following format:
-
 Statement: Electricity causes less damage to the Earth's atmosphere than gasoline.
-Premises: (1) Renewable energy causes less damage to the Earth's atmosphere than nonrenewable energy. (2) Electricity is a form of renewable energy, while gasoline is nonrenewable.
+Renewable energy causes less damage to the Earth's atmosphere than nonrenewable energy.
+Electricity is a form of renewable energy, while gasoline is nonrenewable.
 
 Statement: If a river is rushing southwest on a sunny day, then it is safe to assume that the land gently inclines in that direction.
-Premises: (1) Rivers typically flow downhill, indicating the land slopes in that direction. (2) Consistent river flow suggests a gradual land incline.
+Rivers typically flow downhill, indicating the land slopes in that direction.
+Consistent river flow suggests a gradual land incline.
 
 Statement: Using a metal kitchen tool on a cheese can create small pieces.
-Premises: (1) Metal kitchen tools can cut food into small pieces. (2) Cheese can be easily cut with metal kitchen tools.
-
-When the 'Premises:' line is blank, you will generate TWO logical premises based on the given statement. Make sure to put a '.' at the end of every sentence.
-<</SYS>>
+Metal kitchen tools can cut food into small pieces.
+Cheese can be easily cut with metal kitchen tools.

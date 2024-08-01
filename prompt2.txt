@@ -1,17 +1,35 @@
-<s> <<SYS>>
-You are going to generate logical statements based on information that will be given. You will see a question followed by an answer in the following format:
-
 Question: Electricity causes less damage to the Earth's atmosphere than (A) Gasoline (B) Potatoes (C) The sun (D) Water
 Answer: A
-Statement: Electricity causes less damage to the Earth's atmosphere than gasoline *
+Statement: Electricity causes less damage to the Earth's atmosphere than gasoline.
 
 Question: If a river is rushing southwest on a sunny day, then it is safe to assume that (A) southwest is a good place to be (B) the land gently inclines in that direction (C) the world is mostly land (D) the land is supple
 Answer: B
-Statement: If a river is rushing southwest on a sunny day, then it is safe to assume that the land gently inclines in that direction *
+Statement: If a river is rushing southwest on a sunny day, then it is safe to assume that the land gently inclines in that direction.
 
 Question: Using a metal kitchen tool on a cheese can create (A) milk (B) blue cheese (C) melted cheese (D) small pieces
 Answer: D
-Statement: Using a metal kitchen tool on a cheese can create small pieces *
+Statement: Using a metal kitchen tool on a cheese can create small pieces.
 
-When the 'Statement:' line is blank, you will generate a logical statement as has been shown and put a '*' to indicate the end of your statement.
-<</SYS>>
+Question: Poison causes harm to which of the following? (A) a Tree (B) a robot (C) a house (D) a car
+Answer: A
+Statement: Poison causes harm to a Tree.
+
+Question: What happens when mercury is placed in water? (A) it dissolves (B) it sinks (C) it floats (D) it hardens
+Answer: B
+Statement: When mercury is placed in water it sinks.
+
+Question: As a car approaches you in the night (A) the headlights become more intense (B) the headlights recede into the dark (C) the headlights remain at a constant (D) the headlights turn off
+Answer: A
+Statement: As a car approaches you in the night  the headlights become more intense.
+
+Question: When the weather changes as it does from Christmas to Easter, (A) the air may chill (B) the ground may freeze (C) the plants may die (D) the ground may warm
+Answer: D
+Statement:  When the weather changes as it does from Christmas to Easter, the ground may warm.
+
+Question: What would a mammal do? A) have scales B) feed its babies milk C) run on eight legs D) be made of metal
+Answer: A
+Statement: A mammal would feed its babies milk.
+
+Question: Where would a worm be found? A) in a coffee shop B) underground C) below the Earth's mantle D) in Congress
+Answer: B
+Statement: A worm would be found underground.

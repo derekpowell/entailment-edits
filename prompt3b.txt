@@ -1,0 +1,99 @@
+Question: Electricity causes less damage to the Earth's atmosphere than (A) Gasoline (B) Potatoes (C) The sun (D) Water
+Answer: A
+Burning gasoline releases pollutants.
+Pollutants damage the Earth's Atmosphere.
+
+Question: If a river is rushing southwest on a sunny day, then it is safe to assume that (A) southwest is a good place to be (B) the land gently inclines in that direction (C) the world is mostly land (D) the land is supple
+Answer: B
+Water flows from a high point to a lower point.
+The direction of a river is the incline of the land.
+
+Question: Using a metal kitchen tool on a cheese can create (A) milk (B) blue cheese (C) melted cheese (D) small pieces
+Answer: D
+Metal kitchen tools can cut food into small pieces.
+Cheese can be easily cut with metal kitchen tools.
+
+Question: Poison causes harm to which of the following? (A) a Tree (B) a robot (C) a house (D) a car
+Answer: A
+Poison causes harm to living things.
+A tree is a living thing.
+
+Question: There is most likely going to be fog around: (A) a marsh (B) a tundra (C) the plains (D) a desert
+Answer: A
+Fog forms in areas with high moisture.
+A marsh has high moisture levels.
+
+Question: Predators eat (A) lions (B) humans (C) bunnies (D) grass
+Answer: C
+Predators hunt and eat other animals.
+Bunnies are animals that predators hunt.
+
+Question: Oak tree seeds are planted and a sidewalk is paved right next to that spot, until eventually, the tree is tall and the roots must extend past the sidewalk, which means (A) roots may be split (B) roots may begin to die (C) parts may break the concrete (D) roots may fall apart
+Answer: C
+Tree roots grow and expand as the tree matures.
+Expanding roots can push up and break through concrete surfaces.
+
+Question: As the rain forest is deforested the atmosphere will increase with (A) oxygen (B) nitrogen (C) carbon (D) rain
+Answer: C
+Trees absorb carbon dioxide and store carbon.
+Deforestation reduces the number of trees, releasing stored carbon into the atmosphere.
+
+Question: The main component in dirt is (A) microorganisms (B) broken stones (C) pollution (D) bacteria
+Answer: B
+Dirt is primarily composed of mineral particles.
+Mineral particles come from broken stones and rocks.
+
+Question: It's easier for human's to survive in: (A) a cave (B) the ocean. (C) a town (D) alone
+Answer: C
+Towns provide access to resources like food, water, and shelter.
+Towns offer social support and services that aid in survival.
+
+Question: A cactus stem is used to store (A) fruit (B) liquid (C) food (D) spines
+Answer: B
+Cacti live in arid environments where water is scarce.
+Cactus stems store liquid to help the plant survive dry conditions.
+
+Question: The summer solstice in the northern hemisphere is four months before (A) May (B) July (C) April (D) October
+Answer: D
+The summer solstice in the northern hemisphere occurs in June.
+Four months after June is October.
+
+Question: which of these would stop a car quicker? (A) a wheel with wet brake pads (B) a wheel without brake pads (C) a wheel with worn brake pads (D) a wheel with dry brake pads
+Answer: D
+Dry brake pads provide better friction against the wheel.
+Better friction allows for quicker stopping of the car.
+
+Question: The chance of wildfires is increased by (A) parched foliage (B) torrential rain (C) lush foliage (D) careful fire maintenance
+Answer: A
+Parched foliage is dry and highly flammable.
+Dry, flammable vegetation increases the likelihood of wildfires.
+
+Question: Overpopulation can cause (A) More fresh water for people to drink (B) Lower Life Expectancy in Countries (C) More food for more people (D) More space for places to people to live
+Answer: B
+Overpopulation strains resources such as food, water, and healthcare.
+Strained resources can lead to lower life expectancy in countries.
+
+Question: If you were attacked by a shark and had to punch it sharply where it pulls in air from, you'd use your hand to make contact with (A) its snout (B) its gills (C) its nose (D) its belly
+Answer: B
+Sharks pull in water through their gills for respiration.
+Punching the gills can disrupt the shark's ability to breathe and deter the attack.
+
+Question: What system is needed for a body to get its needed supply of the gas humans breathe in? (A) the circulatory system (B) the digestive system (C) the school system (D) central nervous system
+Answer: A
+The circulatory system transports oxygen throughout the body.
+Oxygen is the gas humans breathe in and need for survival.
+
+Question: When it's flying, a plane has no friction with the (A) wings (B) ground (C) air (D) clouds
+Answer: B
+Friction occurs when two surfaces are in contact.
+A plane in flight is not in contact with the ground.
+
+Question: To grow plants require (A) acid rain (B) pesticides (C) shafts of sunlight (D) moonbeam rays
+Answer: C
+Plants need sunlight for photosynthesis.
+Shafts of sunlight provide the light energy necessary for plants to grow.
+
+Question: What is the best way to guess a babies eye color? (A) The surroundings they are born in. (B) Their parents usual diet. (C) Just take a random guess. (D) The genealogy records of their family.
+Answer: D
+Eye color is inherited genetically.
+Genealogy records can show the eye colors of the baby's ancestors.
