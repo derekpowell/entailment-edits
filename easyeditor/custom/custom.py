@@ -254,285 +254,285 @@ class EditedModel:
         return(logits.index(max(logits)))
     
 
-def evaluate(evaluation_data, model, prefix_fwd = "", prefix_rev = "", normalization = None):
+# def evaluate(evaluation_data, model, prefix_fwd = "", prefix_rev = "", normalization = None):
 
-    fwd_answers = []
-    rev_answers = []
-    corr_fwd_answers = []
-    corr_rev_answers = []
+#     fwd_answers = []
+#     rev_answers = []
+#     corr_fwd_answers = []
+#     corr_rev_answers = []
 
-    for q in evaluation_data.itertuples():
+#     for q in evaluation_data.itertuples():
 
-        fwd_choices =  q.fwd_choices
-        query_fwd = q.query_fwd.replace("<subj>", q.subj).replace("<answer>", "")
-        if q.property not in ["category_membership", "category_membership1", "category_membership2","category_membership3"]: # do not use prefix for these
-            query_fwd = prefix_fwd + query_fwd
-        ans_fwd = model.choose(query_fwd, fwd_choices, normalization = normalization) # None, "unconditional", "byte_length", "token_length", "root"
-        corr_fwd_answers.append(fwd_choices.index(q.answer_fwd))
-        fwd_answers.append(ans_fwd)
+#         fwd_choices =  q.fwd_choices
+#         query_fwd = q.query_fwd.replace("<subj>", q.subj).replace("<answer>", "")
+#         if q.property not in ["category_membership", "category_membership1", "category_membership2","category_membership3"]: # do not use prefix for these
+#             query_fwd = prefix_fwd + query_fwd
+#         ans_fwd = model.choose(query_fwd, fwd_choices, normalization = normalization) # None, "unconditional", "byte_length", "token_length", "root"
+#         corr_fwd_answers.append(fwd_choices.index(q.answer_fwd))
+#         fwd_answers.append(ans_fwd)
 
-        rev_choices =  q.rev_choices
-        query_rev = q.query_rev.replace("<answer>", q.answer_fwd).replace("<subj>", "")
-        if q.property not in ["category_membership", "category_membership1", "category_membership2","category_membership3"]: # do not use prefix for these
-            query_rev = prefix_rev + query_rev
-        ans_rev = model.choose(query_rev, rev_choices, normalization = normalization) # None, "unconditional", "byte_length", "token_length", "root"
-        corr_rev_answers.append(rev_choices.index(q.subj))
-        rev_answers.append(ans_rev)
+#         rev_choices =  q.rev_choices
+#         query_rev = q.query_rev.replace("<answer>", q.answer_fwd).replace("<subj>", "")
+#         if q.property not in ["category_membership", "category_membership1", "category_membership2","category_membership3"]: # do not use prefix for these
+#             query_rev = prefix_rev + query_rev
+#         ans_rev = model.choose(query_rev, rev_choices, normalization = normalization) # None, "unconditional", "byte_length", "token_length", "root"
+#         corr_rev_answers.append(rev_choices.index(q.subj))
+#         rev_answers.append(ans_rev)
 
-    results = (
-        evaluation_data
-        .assign(
-            corr_fwd_answer = corr_fwd_answers,
-            corr_rev_answer = corr_rev_answers,
-            fwd_predicted = fwd_answers,
-            rev_predicted = rev_answers
-            )
-        .assign(
-            correct_fwd = lambda x: x.corr_fwd_answer==x.fwd_predicted,
-            correct_rev = lambda x: x.corr_rev_answer==x.rev_predicted
-        )
-    )
+#     results = (
+#         evaluation_data
+#         .assign(
+#             corr_fwd_answer = corr_fwd_answers,
+#             corr_rev_answer = corr_rev_answers,
+#             fwd_predicted = fwd_answers,
+#             rev_predicted = rev_answers
+#             )
+#         .assign(
+#             correct_fwd = lambda x: x.corr_fwd_answer==x.fwd_predicted,
+#             correct_rev = lambda x: x.corr_rev_answer==x.rev_predicted
+#         )
+#     )
 
-    return(results)
-
-
-def make_edit_batches(df):
-    df2 = df.copy()
-    batches = []
-    while df2.shape[0] > 0:
-        batch = df2.groupby(["entity"]).sample(1)
-        batches.append(batch)
-        df2 = df2.loc[lambda x: ~x.edit.isin(batch.edit)]
-
-    return(batches)
+#     return(results)
 
 
-def make_rewrite(e):
-    rewrite = {
-            'prompt': f'A {e.subj} is a kind of',
-            'target_new': e.entity, #{'str': e.entity},
-            'subject': e.subj
-            }
+# def make_edit_batches(df):
+#     df2 = df.copy()
+#     batches = []
+#     while df2.shape[0] > 0:
+#         batch = df2.groupby(["entity"]).sample(1)
+#         batches.append(batch)
+#         df2 = df2.loc[lambda x: ~x.edit.isin(batch.edit)]
+
+#     return(batches)
+
+
+# def make_rewrite(e):
+#     rewrite = {
+#             'prompt': f'A {e.subj} is a kind of',
+#             'target_new': e.entity, #{'str': e.entity},
+#             'subject': e.subj
+#             }
     
-    return(rewrite)
+#     return(rewrite)
 
 
-def edit_and_evaluate(edits_df, eval_df, model, edit_method, metrics = False, log_file = None, **kwargs):
+# def edit_and_evaluate(edits_df, eval_df, model, edit_method, metrics = False, log_file = None, **kwargs):
     
-    full_results = pd.DataFrame()
-    full_metrics = []
-    print("===== Editing and evaluating =====")
+#     full_results = pd.DataFrame()
+#     full_metrics = []
+#     print("===== Editing and evaluating =====")
 
-    if edit_method in ["MEMIT", "PMET"]:
-        print("making batches ...")
+#     if edit_method in ["MEMIT", "PMET"]:
+#         print("making batches ...")
 
-        batches = make_edit_batches(edits_df)
-        print("editing in batches ...")
-        for b in tqdm(batches):
+#         batches = make_edit_batches(edits_df)
+#         print("editing in batches ...")
+#         for b in tqdm(batches):
             
-            rewrites = b.apply(make_rewrite, 1).to_list()
+#             rewrites = b.apply(make_rewrite, 1).to_list()
 
-            rewrites = {"prompts": [x["prompt"] for x in rewrites], "target_new": [x["target_new"] for x in rewrites], "subject": [x["subject"] for x in rewrites] }
+#             rewrites = {"prompts": [x["prompt"] for x in rewrites], "target_new": [x["target_new"] for x in rewrites], "subject": [x["subject"] for x in rewrites] }
             
-            metrics = model.edit(rewrites, log_file  = log_file)
+#             metrics = model.edit(rewrites, log_file  = log_file)
 
-            evals = b.filter(["edit"]).merge(eval_df, how = "left", on = "edit")
+#             evals = b.filter(["edit"]).merge(eval_df, how = "left", on = "edit")
             
-            res = evaluate(evals, model, **kwargs)
+#             res = evaluate(evals, model, **kwargs)
             
-            model.restore()
+#             model.restore()
 
-            full_results = pd.concat([full_results, res])
-    else:
+#             full_results = pd.concat([full_results, res])
+#     else:
 
-        for e in tqdm(edits_df.itertuples(),  total = edits_df.shape[0]):
-            if e.edit_type == "category membership":
-                if edit_method in ["ROME", "FT", "GRACE"]:
-                    rewrite = {
-                            'prompts': [f'A {e.subj} is a kind of'],
-                            'target_new': [e.entity], #{'str': e.entity},
-                            'subject': [e.subj]
-                            }
-                    metrics = model.edit(rewrite, log_file  = log_file)
-                    full_metrics.append(metrics)
-                elif edit_method == "ICE":
-                    model.edit({"preprompt": f"Imagine that a {e.subj} is a kind of {e.entity} ...\n\n"}) # and not a kind of {e.orig_entity}
+#         for e in tqdm(edits_df.itertuples(),  total = edits_df.shape[0]):
+#             if e.edit_type == "category membership":
+#                 if edit_method in ["ROME", "FT", "GRACE"]:
+#                     rewrite = {
+#                             'prompts': [f'A {e.subj} is a kind of'],
+#                             'target_new': [e.entity], #{'str': e.entity},
+#                             'subject': [e.subj]
+#                             }
+#                     metrics = model.edit(rewrite, log_file  = log_file)
+#                     full_metrics.append(metrics)
+#                 elif edit_method == "ICE":
+#                     model.edit({"preprompt": f"Imagine that a {e.subj} is a kind of {e.entity} ...\n\n"}) # and not a kind of {e.orig_entity}
                     
-                elif edit_method == "BASE":
-                    model.edit({"preprompt": ""})
+#                 elif edit_method == "BASE":
+#                     model.edit({"preprompt": ""})
 
                 
 
                 
-                evals = eval_df.loc[lambda x: (x.edit_type == "category membership") & (x.entity == e.entity) & (x.subj == e.subj)]
+#                 evals = eval_df.loc[lambda x: (x.edit_type == "category membership") & (x.entity == e.entity) & (x.subj == e.subj)]
 
-            elif e.edit_type == "category property":
-                if edit_method in ["ROME", "FT", "PMET", "GRACE"]:
-                    rewrite_prompt = e.query_fwd.replace("<subj>", e.entity).replace(" <answer>", "")
-                    rewrite = {
-                        'prompts': [rewrite_prompt],
-                        'target_new': [e.answer_fwd], #{'str': e.entity},
-                        'subject': [e.entity]
-                    }
-                    metrics = model.edit(rewrite, log_file  = log_file)
-                    full_metrics.append(metrics)
+#             elif e.edit_type == "category property":
+#                 if edit_method in ["ROME", "FT", "PMET", "GRACE"]:
+#                     rewrite_prompt = e.query_fwd.replace("<subj>", e.entity).replace(" <answer>", "")
+#                     rewrite = {
+#                         'prompts': [rewrite_prompt],
+#                         'target_new': [e.answer_fwd], #{'str': e.entity},
+#                         'subject': [e.entity]
+#                     }
+#                     metrics = model.edit(rewrite, log_file  = log_file)
+#                     full_metrics.append(metrics)
 
-                elif edit_method == "ICE":
+#                 elif edit_method == "ICE":
                     
-                    rewrite_prompt = e.query_fwd.replace("<subj>", e.entity).replace("<answer>", e.answer_fwd)
-                    model.edit({"preprompt": f"Imagine that {rewrite_prompt} ...\n\n"}) # and not a kind of {e.orig_entity}    
+#                     rewrite_prompt = e.query_fwd.replace("<subj>", e.entity).replace("<answer>", e.answer_fwd)
+#                     model.edit({"preprompt": f"Imagine that {rewrite_prompt} ...\n\n"}) # and not a kind of {e.orig_entity}    
 
-                evals = eval_df.loc[lambda x: (x.edit_type == "category property") & (x.entity == e.entity) & (x.property == e.property)]
+#                 evals = eval_df.loc[lambda x: (x.edit_type == "category property") & (x.entity == e.entity) & (x.property == e.property)]
             
-            res = evaluate(evals, model, **kwargs)
+#             res = evaluate(evals, model, **kwargs)
         
-        model.restore()
+#         model.restore()
 
-        full_results = pd.concat([full_results, res])
+#         full_results = pd.concat([full_results, res])
 
-    full_results["edit_method"] = edit_method
+#     full_results["edit_method"] = edit_method
     
-    return(full_results)
+#     return(full_results)
     
-    # if not metrics:
-        # return(full_results)
+#     # if not metrics:
+#         # return(full_results)
     
-    # else:
-        # return(full_results, metrics)
+#     # else:
+#         # return(full_results, metrics)
 
 
 
-def test_dataset(edits_df, eval_df, model, edit_method=None, prefix_fwd = "", prefix_rev = "", metrics = False, log_file = None, **kwargs):
-    # just runs through the data without actually using the model
-    full_results = pd.DataFrame()
-    full_metrics = []
+# def test_dataset(edits_df, eval_df, model, edit_method=None, prefix_fwd = "", prefix_rev = "", metrics = False, log_file = None, **kwargs):
+#     # just runs through the data without actually using the model
+#     full_results = pd.DataFrame()
+#     full_metrics = []
 
-    for e in edits_df.itertuples():
-        if e.edit_type == "category membership":
-            if edit_method in ["ROME", "FT", "PMET", "GRACE"]:
-                rewrite = {
-                        'prompts': [f'A {e.subj} is a kind of'],
-                        'target_new': [e.entity], #{'str': e.entity},
-                        'subject': [e.subj]
-                        }
-                # metrics = model.edit(rewrite, log_file  = log_file)
-                # full_metrics.append(metrics)
-            elif edit_method == "ICE":
-                rewrite_prompt = {"preprompt": f"Imagine that a {e.subj} is a kind of {e.entity} ...\n\n"}
+#     for e in edits_df.itertuples():
+#         if e.edit_type == "category membership":
+#             if edit_method in ["ROME", "FT", "PMET", "GRACE"]:
+#                 rewrite = {
+#                         'prompts': [f'A {e.subj} is a kind of'],
+#                         'target_new': [e.entity], #{'str': e.entity},
+#                         'subject': [e.subj]
+#                         }
+#                 # metrics = model.edit(rewrite, log_file  = log_file)
+#                 # full_metrics.append(metrics)
+#             elif edit_method == "ICE":
+#                 rewrite_prompt = {"preprompt": f"Imagine that a {e.subj} is a kind of {e.entity} ...\n\n"}
             
-            evals = eval_df.loc[lambda x: (x.edit_type == "category membership") & (x.entity == e.entity) & (x.subj == e.subj)]
+#             evals = eval_df.loc[lambda x: (x.edit_type == "category membership") & (x.entity == e.entity) & (x.subj == e.subj)]
 
-        elif e.edit_type == "category property":
-            if edit_method in ["ROME", "FT", "PMET", "GRACE"]:
-                rewrite_prompt = e.query_fwd.replace("<subj>", e.entity).replace("<answer>", e.answer_fwd)
+#         elif e.edit_type == "category property":
+#             if edit_method in ["ROME", "FT", "PMET", "GRACE"]:
+#                 rewrite_prompt = e.query_fwd.replace("<subj>", e.entity).replace("<answer>", e.answer_fwd)
                
-                rewrite = {
-                    'prompts': [rewrite_prompt],
-                    'target_new': [e.answer_fwd], #{'str': e.entity},
-                    'subject': [e.entity]
-                }
+#                 rewrite = {
+#                     'prompts': [rewrite_prompt],
+#                     'target_new': [e.answer_fwd], #{'str': e.entity},
+#                     'subject': [e.entity]
+#                 }
 
-                print(rewrite)
-                # metrics = model.edit(rewrite, log_file  = log_file)
-                # full_metrics.append(metrics)
+#                 print(rewrite)
+#                 # metrics = model.edit(rewrite, log_file  = log_file)
+#                 # full_metrics.append(metrics)
 
-            elif edit_method == "ICE":
+#             elif edit_method == "ICE":
                 
-                rewrite_prompt = e.query_fwd.replace("<subj>", e.entity).replace("<answer>", e.answer_fwd)
-                print(f"Imagine that {rewrite_prompt} ...\n\n")
-                # model.edit({"preprompt": f"Imagine that {rewrite_prompt} ...\n\n"}) # and not a kind of {e.orig_entity}    
+#                 rewrite_prompt = e.query_fwd.replace("<subj>", e.entity).replace("<answer>", e.answer_fwd)
+#                 print(f"Imagine that {rewrite_prompt} ...\n\n")
+#                 # model.edit({"preprompt": f"Imagine that {rewrite_prompt} ...\n\n"}) # and not a kind of {e.orig_entity}    
 
-            evals = eval_df.loc[lambda x: (x.edit_type == "category property") & (x.entity == e.entity) & (x.property == e.property)]
+#             evals = eval_df.loc[lambda x: (x.edit_type == "category property") & (x.entity == e.entity) & (x.property == e.property)]
         
-        res = test_eval_data(evals, model, prefix_fwd, prefix_rev, **kwargs)
+#         res = test_eval_data(evals, model, prefix_fwd, prefix_rev, **kwargs)
         
-        # model.restore()
+#         # model.restore()
 
-        full_results = pd.concat([full_results, res])
+#         full_results = pd.concat([full_results, res])
 
-    full_results["edit_method"] = edit_method
+#     full_results["edit_method"] = edit_method
     
-    return(full_results)
+#     return(full_results)
 
 
 
-def test_eval_data(evaluation_data, model, prefix_fwd = "", prefix_rev = ""):
-    # just runs through the data without actually using the model
+# def test_eval_data(evaluation_data, model, prefix_fwd = "", prefix_rev = ""):
+#     # just runs through the data without actually using the model
 
-    fwd_answers = []
-    rev_answers = []
-    corr_fwd_answers = []
-    corr_rev_answers = []
+#     fwd_answers = []
+#     rev_answers = []
+#     corr_fwd_answers = []
+#     corr_rev_answers = []
 
-    for q in evaluation_data.itertuples():
+#     for q in evaluation_data.itertuples():
 
-        fwd_choices =  q.fwd_choices
-        query_fwd = q.query_fwd.replace("<subj>", q.subj).replace("<answer>", "")
-        if q.property not in ["category_membership", "category_membership1", "category_membership2","category_membership3"]: # do not use prefix for these
-            query_fwd = prefix_fwd + query_fwd
-        # ans_fwd = model.choose(query_fwd, fwd_choices, normalization = None) # None, "unconditional", "byte_length", "token_length", "root"
+#         fwd_choices =  q.fwd_choices
+#         query_fwd = q.query_fwd.replace("<subj>", q.subj).replace("<answer>", "")
+#         if q.property not in ["category_membership", "category_membership1", "category_membership2","category_membership3"]: # do not use prefix for these
+#             query_fwd = prefix_fwd + query_fwd
+#         # ans_fwd = model.choose(query_fwd, fwd_choices, normalization = None) # None, "unconditional", "byte_length", "token_length", "root"
 
-        try:
-            z = fwd_choices.index(q.answer_fwd)
-            corr_fwd_answers.append(1)
-        except:
-            print("check forward answers!", q.edit, q.property)
-            corr_fwd_answers.append(0)
+#         try:
+#             z = fwd_choices.index(q.answer_fwd)
+#             corr_fwd_answers.append(1)
+#         except:
+#             print("check forward answers!", q.edit, q.property)
+#             corr_fwd_answers.append(0)
 
-        rev_choices =  q.rev_choices
-        query_rev = q.query_rev.replace("<answer>", q.answer_fwd).replace("<subj>", "")
+#         rev_choices =  q.rev_choices
+#         query_rev = q.query_rev.replace("<answer>", q.answer_fwd).replace("<subj>", "")
 
-        if q.property not in ["category_membership", "category_membership1", "category_membership2","category_membership3"]: # do not use prefix for these
-            query_rev = prefix_rev + query_rev
+#         if q.property not in ["category_membership", "category_membership1", "category_membership2","category_membership3"]: # do not use prefix for these
+#             query_rev = prefix_rev + query_rev
         
-        try:
-            z = rev_choices.index(q.subj)
-            corr_rev_answers.append(1)
-        except:
-            print("check reverse answers!", q.edit, q.property)
-            corr_rev_answers.append(0)
+#         try:
+#             z = rev_choices.index(q.subj)
+#             corr_rev_answers.append(1)
+#         except:
+#             print("check reverse answers!", q.edit, q.property)
+#             corr_rev_answers.append(0)
         
-    results = (
-        evaluation_data
-        .assign(
-            corr_fwd_answers = corr_fwd_answers,
-            corr_rev_answers = corr_rev_answers
-            )
-    )
+#     results = (
+#         evaluation_data
+#         .assign(
+#             corr_fwd_answers = corr_fwd_answers,
+#             corr_rev_answers = corr_rev_answers
+#             )
+#     )
 
-    return(results)
+#     return(results)
 
 
-def filter_evals(baseline_result, edits_df, eval_df):
-    corr_memberships = baseline_result.loc[lambda x: x.property=="category_membership"].loc[lambda x: x.correct_fwd]
-    # join w/ edits/evals on corr_memberships.subj == edits/evals.subj 
-    # when editing dogs, only test labradors if it knew labradors were dogs
+# def filter_evals(baseline_result, edits_df, eval_df):
+#     corr_memberships = baseline_result.loc[lambda x: x.property=="category_membership"].loc[lambda x: x.correct_fwd]
+#     # join w/ edits/evals on corr_memberships.subj == edits/evals.subj 
+#     # when editing dogs, only test labradors if it knew labradors were dogs
     
-    category_property_evals = eval_df.loc[lambda x: (x.entity.isin(corr_memberships.entity) & (x.edit_type == "category property"))]
+#     category_property_evals = eval_df.loc[lambda x: (x.entity.isin(corr_memberships.entity) & (x.edit_type == "category property"))]
 
-    corr_properties = baseline_result.loc[lambda x:(x.correct_fwd) | (x.property.str.startswith("category_membership"))]
-    # join w/ edits/evals on corr_properties.subj = eval_df.entity and property=property
-    # when editing whether a dog is a cow, only test on properties it knew cows have
-    # and only test "unchanged" properties it knew dogs have
+#     corr_properties = baseline_result.loc[lambda x:(x.correct_fwd) | (x.property.str.startswith("category_membership"))]
+#     # join w/ edits/evals on corr_properties.subj = eval_df.entity and property=property
+#     # when editing whether a dog is a cow, only test on properties it knew cows have
+#     # and only test "unchanged" properties it knew dogs have
 
-    # corr_properties
+#     # corr_properties
 
-    category_membership_evals = (
-        pd.merge(
-            corr_properties.filter(["entity", "property"]),
-            eval_df.loc[lambda x: x.edit_type == "category membership"],
-            how = "left",
-            on = ["entity", "property"]
-        )
-    )
+#     category_membership_evals = (
+#         pd.merge(
+#             corr_properties.filter(["entity", "property"]),
+#             eval_df.loc[lambda x: x.edit_type == "category membership"],
+#             how = "left",
+#             on = ["entity", "property"]
+#         )
+#     )
 
-    out = pd.concat([category_property_evals, category_membership_evals])
+#     out = pd.concat([category_property_evals, category_membership_evals])
 
-    return(out)
+#     return(out)
 
 
-def filter_edits_evals(baseline_result, edits_df, eval_df):
-    filtered_evals = filter_evals(baseline_result, edits_df, eval_df)
-    filtered_edits = edits_df.loc[lambda x: x.edit.isin(filtered_evals.edit)]
+# def filter_edits_evals(baseline_result, edits_df, eval_df):
+#     filtered_evals = filter_evals(baseline_result, edits_df, eval_df)
+#     filtered_edits = edits_df.loc[lambda x: x.edit.isin(filtered_evals.edit)]
 
-    return(filtered_edits, filtered_evals)
+#     return(filtered_edits, filtered_evals)

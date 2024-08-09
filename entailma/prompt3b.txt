@@ -43,7 +43,7 @@ Answer: B
 Dirt is primarily composed of mineral particles.
 Mineral particles come from broken stones and rocks.
 
-Question: It's easier for human's to survive in: (A) a cave (B) the ocean. (C) a town (D) alone
+Question: It's easier for human's to survive in: (A) a cave (B) the ocean. (C) a town ( D) alone
 Answer: C
 Towns provide access to resources like food, water, and shelter.
 Towns offer social support and services that aid in survival.
