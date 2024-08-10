@@ -35,7 +35,9 @@ elif QA_EXAMPLE_PATH:
     mc_answer_prompt = generate_qa_prompt("data/obqa/dev.tsv")
 
 
-def mc_choose_answer(question, model, tokenizer):
+def mc_choose_answer(question, model, tokenizer=None):
+    if not tokenizer:
+        tokenizer = model.tok
     
     input_str = mc_answer_prompt + f"\nQuestion: {question}\nAnswer:"
     inputs = tokenizer(input_str, return_tensors="pt")
