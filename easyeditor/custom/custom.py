@@ -296,25 +296,25 @@ class EditedModel:
 #     return(results)
 
 
-# def make_edit_batches(df):
-#     df2 = df.copy()
-#     batches = []
-#     while df2.shape[0] > 0:
-#         batch = df2.groupby(["entity"]).sample(1)
-#         batches.append(batch)
-#         df2 = df2.loc[lambda x: ~x.edit.isin(batch.edit)]
+def make_edit_batches(df):
+    df2 = df.copy()
+    batches = []
+    while df2.shape[0] > 0:
+        batch = df2.groupby(["entity"]).sample(1)
+        batches.append(batch)
+        df2 = df2.loc[lambda x: ~x.edit.isin(batch.edit)]
 
-#     return(batches)
+    return(batches)
 
 
-# def make_rewrite(e):
-#     rewrite = {
-#             'prompt': f'A {e.subj} is a kind of',
-#             'target_new': e.entity, #{'str': e.entity},
-#             'subject': e.subj
-#             }
+def make_rewrite(e):
+    rewrite = {
+            'prompt': f'A {e.subj} is a kind of',
+            'target_new': e.entity, #{'str': e.entity},
+            'subject': e.subj
+            }
     
-#     return(rewrite)
+    return(rewrite)
 
 
 # def edit_and_evaluate(edits_df, eval_df, model, edit_method, metrics = False, log_file = None, **kwargs):

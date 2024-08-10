@@ -40,7 +40,7 @@ def mc_choose_answer(question, model, tokenizer):
     input_str = mc_answer_prompt + f"\nQuestion: {question}\nAnswer:"
     inputs = tokenizer(input_str, return_tensors="pt")
     input_ids = inputs["input_ids"].cuda()
-    sequences = model.generate(input_ids, max_new_tokens = 1)
+    sequences = model.generate(input_ids = input_ids, max_new_tokens = 1)
     
     return tokenizer.decode(sequences[0])[-1]
 
