@@ -65,52 +65,40 @@ class MultimodalTrainer(BaseTrainer):
         with torch.set_grad_enabled(training):
             # Editing loss
             post_edit_outputs = edited_model(batch["edit_outer"])
-            post_batch_labels = batch["edit_outer"]["labels"]
             if not isinstance(post_edit_outputs, torch.Tensor):
                 post_edit_logits = post_edit_outputs.logits
+                post_batch_labels = post_edit_outputs.labels
             else:
                 post_edit_logits = post_edit_outputs
+                post_batch_labels = batch["edit_outer"]["labels"]
 
             # rephrase image
             post_image_edit_outputs = edited_model(batch["edit_outer_image"])
-            post_image_batch_labels = batch["edit_outer_image"]["labels"]
+            
             if not isinstance(post_image_edit_outputs, torch.Tensor):
                 post_image_edit_logits = post_image_edit_outputs.logits
+                post_image_batch_labels = post_image_edit_outputs.labels
             else:
                 post_image_edit_logits = post_image_edit_outputs
+                post_image_batch_labels = batch["edit_outer_image"]["labels"]
                 
             inner_edit_outputs = edited_model(batch["edit_inner"])
-            inner_batch_labels = batch["edit_inner"]["labels"]
+            
             if not isinstance(inner_edit_outputs, torch.Tensor):
                 inner_edit_logits = inner_edit_outputs.logits
+                inner_batch_labels = inner_edit_outputs.labels
             else:
                 inner_edit_logits = inner_edit_outputs
+                inner_batch_labels = batch["edit_inner"]["labels"]
 
-            if post_edit_logits.shape[1] > post_batch_labels.shape[1]:
-                l_edit = self.model.edit_loss_fn(self.config, post_edit_logits, post_batch_labels)["nll"]
-            else:
-                l_edit = self.model.edit_loss_fn(self.config, post_edit_logits, post_batch_labels[:, -post_edit_logits.shape[1]-1:])["nll"]
-            if post_image_edit_logits.shape[1] > post_image_batch_labels.shape[1]:    
-                l_image_edit = self.model.edit_loss_fn(self.config, post_image_edit_logits, post_image_batch_labels)["nll"]
-            else:
-                l_image_edit = self.model.edit_loss_fn(self.config, post_image_edit_logits, post_image_batch_labels[:, -post_image_edit_logits.shape[1]-1:])["nll"]               
+            l_edit = self.model.edit_loss_fn(self.config, post_edit_logits, post_batch_labels, multimodal=True)["nll"]
+            l_image_edit = self.model.edit_loss_fn(self.config, post_image_edit_logits, post_image_batch_labels, multimodal=True)["nll"]          
             
             # Collect some useful metrics
             with torch.no_grad():
-                if post_edit_logits.shape[1] > post_batch_labels.shape[1]:
-                    post_edit_dict = self.model.edit_loss_fn(self.config, post_edit_logits, post_batch_labels)
-                else:
-                    post_edit_dict = self.model.edit_loss_fn(self.config, post_edit_logits, post_batch_labels[:, -post_edit_logits.shape[1]-1:])
-
-                if inner_edit_logits.shape[1] > inner_batch_labels.shape[1]:
-                    inner_edit_dict = self.model.edit_loss_fn(self.config, inner_edit_logits, inner_batch_labels)
-                else:
-                    inner_edit_dict = self.model.edit_loss_fn(self.config, inner_edit_logits, inner_batch_labels[:, -inner_edit_logits.shape[1]-1:])
-
-                if post_image_edit_logits.shape[1] > post_image_batch_labels.shape[1]:    
-                    image_rephrase_edit_dict = self.model.edit_loss_fn(self.config, post_image_edit_logits, post_image_batch_labels)
-                else:
-                    image_rephrase_edit_dict = self.model.edit_loss_fn(self.config, post_image_edit_logits, post_image_batch_labels[:, -post_image_edit_logits.shape[1]-1:])
+                post_edit_dict = self.model.edit_loss_fn(self.config, post_edit_logits, post_batch_labels, multimodal=True)
+                inner_edit_dict = self.model.edit_loss_fn(self.config, inner_edit_logits, inner_batch_labels, multimodal=True)
+                image_rephrase_edit_dict = self.model.edit_loss_fn(self.config, post_image_edit_logits, post_image_batch_labels, multimodal=True)
             
             post_base_outputs = edited_model(batch["loc"])
             if not isinstance(post_base_outputs, torch.Tensor):
@@ -131,23 +119,23 @@ class MultimodalTrainer(BaseTrainer):
             l_loc = kl_loc_loss(base_logits.detach(), post_base_logits, mask=kl_mask)
             l_image_loc = kl_loc_loss(base_image_logits.detach(), post_image_base_logits, mask=kl_image_mask)
 
-        if l_edit.isnan():
-            print("l_edit is nan")
-            print("input: ", batch["edit_outer"]['text_input'])
-        elif l_image_edit.isnan():
-            print("l_image_edit is nan")
-            print("input: ", batch["edit_outer_image"]['text_input'])
-        elif l_loc.isnan():
-            print("l_loc is nan")
-            print("input: ", batch["loc"]['text_input'])
-        elif l_image_loc.isnan():
-            print("l_image_loc is nan")
-            print("input: ", batch["loc_image"]['text_input'])
+        # if l_edit.isnan():
+        #     print("l_edit is nan")
+        #     print("input: ", batch["edit_outer"]['text_input'])
+        # elif l_image_edit.isnan():
+        #     print("l_image_edit is nan")
+        #     print("input: ", batch["edit_outer_image"]['text_input'])
+        # elif l_loc.isnan():
+        #     print("l_loc is nan")
+        #     print("input: ", batch["loc"]['text_input'])
+        # elif l_image_loc.isnan():
+        #     print("l_image_loc is nan")
+        #     print("input: ", batch["loc_image"]['text_input'])
 
         if self.config.alg == "SERAC_MULTI":
             l_total_edit = self.config.cedit * l_edit + self.config.cloc * l_loc + self.config.iedit * l_image_edit
         else:
-            l_total_edit = self.config.cedit * l_edit + self.config.cloc * (l_loc+l_image_loc) + self.config.iedit * l_image_edit
+            l_total_edit = self.config.cedit * l_edit + self.config.cloc * (l_loc + l_image_loc) + self.config.iedit * l_image_edit
         
 
         if training and self.config.alg != 'ft':

@@ -35,15 +35,15 @@ class MendRewriteExecutor:
 
         # Load the trained MEND model
         self.alg = MEND(self.model, params, lambda: deepcopy(self.model))
-        d = torch.load(params.archive)
+        d = torch.load(params.archive, map_location='cpu')
 
         self.alg.load_state_dict(
             {k.replace("gtn.", "mend."): v for k, v in d["model"].items()}
         )
-        if params.model_parallel:
-            self.alg.mend.to(deque(self.alg.model.parameters(), maxlen=1)[0].device)
-        else:
-            self.alg.to(torch.device(f'cuda:{params.device}'))
+        # if params.model_parallel:
+        self.alg.mend.to(deque(self.alg.model.parameters(), maxlen=1)[0].device)
+        # else:
+        #     self.alg.to(torch.device(f'cuda:{params.device}'))
 
         # Disable unneeded gradients
         for n, p in self.model.named_parameters():
@@ -119,7 +119,9 @@ class MendRewriteExecutor:
             labels=target_tok['input_ids'],
         )
         cond = {k: sent_tok[k] for k in ["input_ids", "attention_mask"]}
-        _, model_info = self.alg.edit(edit_inner, cond, return_factors=True)
+
+        self.alg.eval()
+        edited_model, model_info = self.alg.edit(edit_inner, cond, return_factors=True)
         factors = {
             k + "." + n: v.detach().cpu().numpy()
             for k, pair in model_info["factors"].items()
@@ -141,33 +143,29 @@ class MendRewriteExecutor:
                     if return_orig_weights and n not in weights_copy:
                         weights_copy[n] = p.detach().clone()
 
-                    if "gpt2" in hparams.model_name.lower():
-                        delta = torch_factors[uname].t() @ torch_factors[vname]
-                    elif "gpt-j" in hparams.model_name.lower():
-                        delta = torch_factors[vname].t() @ torch_factors[uname]
-                    elif "llama" in hparams.model_name.lower():
-                        delta = torch_factors[vname].t() @ torch_factors[uname]
-                    elif 'baichuan' in hparams.model_name.lower():
-                        delta = torch_factors[vname].t() @ torch_factors[uname]
-                    elif 't5' in hparams.model_name.lower():
-                        delta = torch_factors[vname].t() @ torch_factors[uname]
-                    elif 'chatglm2' in hparams.model_name.lower():
-                        delta = torch_factors[vname].t() @ torch_factors[uname]
-                    elif 'internlm' in hparams.model_name.lower():
-                        delta = torch_factors[vname].t() @ torch_factors[uname]
-                    elif 'qwen' in hparams.model_name.lower():
-                        delta = torch_factors[vname].t() @ torch_factors[uname]
-                    elif 'mistral' in hparams.model_name.lower():
-                        delta = torch_factors[vname].t() @ torch_factors[uname]
-                    else:
-                        raise ValueError("Unknown model")
-                    p.add_((delta * edit_lrs[eli] * hparams.lr_scale).to(p.device))
+                    # if "gpt2" in hparams.model_name.lower():
+                    #     delta = torch_factors[uname].t() @ torch_factors[vname]
+                    # elif "gpt-j" in hparams.model_name.lower():
+                    #     delta = torch_factors[vname].t() @ torch_factors[uname]
+                    # elif "llama" in hparams.model_name.lower():
+                    #     delta = torch_factors[vname].t() @ torch_factors[uname]
+                    # elif 'baichuan' in hparams.model_name.lower():
+                    #     delta = torch_factors[vname].t() @ torch_factors[uname]
+                    # elif 't5' in hparams.model_name.lower():
+                    #     delta = torch_factors[vname].t() @ torch_factors[uname]
+                    # elif 'chatglm2' in hparams.model_name.lower():
+                    #     delta = torch_factors[vname].t() @ torch_factors[uname]
+                    # elif 'internlm' in hparams.model_name.lower():
+                    #     delta = torch_factors[vname].t() @ torch_factors[uname]
+                    # elif 'qwen' in hparams.model_name.lower():
+                    #     delta = torch_factors[vname].t() @ torch_factors[uname]
+                    # else:
+                    #     raise ValueError("Unknown model")
+                    # p.add_((delta * edit_lrs[eli] * hparams.lr_scale).to(p.device))
                     eli += 1
 
-        if not keep_original_weight:
-            weights_copy = {}
-
-        return model, weights_copy
+        return edited_model, weights_copy
+    
     
 class MendMultimodalRewriteExecutor(MendRewriteExecutor):
     def __init__(self):
@@ -239,7 +237,7 @@ class MendMultimodalRewriteExecutor(MendRewriteExecutor):
             for request in requests
         ]
         image = [request["image"] for request in requests]
-        image = torch.stack(image, dim=0)
+        image = torch.stack(image, dim=0).to(model.device)
         text_input = [s + t for s, t in zip(src, trg)]
         
         if hparams.model_name == "minigpt4":
@@ -257,7 +255,9 @@ class MendMultimodalRewriteExecutor(MendRewriteExecutor):
             prompts_len=prompts_len
         )
         # cond = {k: sent_tok[k] for k in ["input_ids", "attention_mask"]}
-        _, model_info = self.alg.edit(edit_inner, return_factors=True)
+
+        self.alg.eval()
+        edited_model, model_info = self.alg.edit(edit_inner, return_factors=True)
         factors = {
             k + "." + n: v.detach().cpu().numpy()
             for k, pair in model_info["factors"].items()
@@ -269,8 +269,6 @@ class MendMultimodalRewriteExecutor(MendRewriteExecutor):
         # Edit!
         d = factors
         torch_factors = {k: torch.tensor(v) for k, v in d.items()}
-        eli = 0
-        edit_lrs = torch_factors["edit_lrs"]
 
         with torch.no_grad():
             for n, p in model.named_parameters():
@@ -279,16 +277,37 @@ class MendMultimodalRewriteExecutor(MendRewriteExecutor):
                     if return_orig_weights and n not in weights_copy:
                         weights_copy[n] = p.detach().clone()
 
-                    if "minigpt4" in hparams.model_name.lower():
-                        delta = torch_factors[vname].t() @ torch_factors[uname]
-                    elif "blip2" in hparams.model_name.lower():
-                        delta = torch_factors[vname].t() @ torch_factors[uname]
-                    else:
-                        raise ValueError("Unknown model")
-                    p.add_((delta * edit_lrs[eli] * hparams.lr_scale).to(p.device))
-                    eli += 1
-
         if not keep_original_weight:
             weights_copy = {}
 
-        return model, weights_copy
+        return edited_model, weights_copy
+
+
+class MendPerRewriteExecutor(MendRewriteExecutor):
+    def __init__(self):
+        super().__init__()
+        
+    def apply_to_model(
+        self,
+        request,
+        model: AutoModelForCausalLM,
+        tok: AutoTokenizer,
+        device,
+        hparams: MENDHyperParams,
+        copy=False,
+        return_orig_weights=False,
+        keep_original_weight=False,
+        **kwargs
+    ):
+        
+        if not self.is_init:
+            self.init_model(model, tok, hparams)
+
+        weights_copy = {}
+        model = deepcopy(self.model) if copy else self.model
+
+        self.alg.eval()
+        edited_model, model_info = self.alg.edit(request["cond"], personality=True, return_factors=True)
+        
+        return edited_model, weights_copy
+        

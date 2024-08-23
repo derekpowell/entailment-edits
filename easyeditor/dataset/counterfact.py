@@ -140,44 +140,32 @@ class CounterFactDataset(Dataset):
 
 
     def collate_gpt_fn(self, batch):
-        src = [b["prompt"] for b in batch]
-        trg = [b["target_new"] for b in batch]
-        cond = ["{} >> {} || {}".format(b['ground_truth'],
-                                        b["target_new"],
-                                        b['prompt']) for b in batch]
-        rephrase = [b["rephrase_prompt"] for b in batch]
-        loc = [b["locality_prompt"] for b in batch]
-        loc_ans = [b["locality_ground_truth"] for b in batch]
-
-        # if (hasattr(self.config, 'alg') and self.config.alg == 'SERAC') or \
-        #         (hasattr(self.config, 'alg_name') and self.config.alg_name == 'SERAC'):
-        #     def flatten(nested_list: typing.List[typing.List]):
-        #         return [item for nested_list_ in nested_list for item in nested_list_]
-        #
-        #     trg = [' ' + trg_ for trg_ in trg]
-        #     loc_ans = [' ' + loc_ans_ for loc_ans_ in loc_ans]
-        #     src = [[src_ + self.tok.decode(self.tok(trg_, truncation=True, max_length=self.config.max_length)['input_ids'][:i])
-        #             for i in range(len(self.tok(trg_, truncation=True, max_length=self.config.max_length)["input_ids"]))]
-        #            for src_, trg_ in zip(src, trg)]
-        #     rephrase = [[rephrase_ + self.tok.decode(self.tok(trg_, truncation=True, max_length=self.config.max_length)['input_ids'][:i])
-        #             for i in range(len(self.tok(trg_, truncation=True, max_length=self.config.max_length)["input_ids"]))]
-        #            for rephrase_, trg_ in zip(rephrase, trg)]
-        #     loc = [[loc_ + self.tok.decode(self.tok(loc_ans_, truncation=True, max_length=self.config.max_length)['input_ids'][:i])
-        #             for i in range(len(self.tok(loc_ans_, truncation=True, max_length=self.config.max_length)["input_ids"]))]
-        #            for loc_, loc_ans_ in zip(loc, loc_ans)]
-        #     trg = [[self.tok.decode(self.tok(trg_, truncation=True, max_length=self.config.max_length)['input_ids'][i])
-        #             for i in range(len(self.tok(trg_, truncation=True, max_length=self.config.max_length)["input_ids"]))]
-        #            for src_, trg_ in zip(src, trg)]
-        #     loc_ans = [[self.tok.decode(self.tok(loc_ans_, truncation=True, max_length=self.config.max_length)['input_ids'][i])
-        #             for i in range(len(self.tok(loc_ans_, truncation=True, max_length=self.config.max_length)["input_ids"]))]
-        #            for loc_, loc_ans_ in zip(loc, loc_ans)]
-        #
-        #     src, rephrase, trg, loc, loc_ans = flatten(src), flatten(rephrase), flatten(trg), flatten(loc), flatten(loc_ans)
-        #
-        # else:
-        src = [src_ + ' ' + trg_ for src_, trg_ in zip(src, trg)]
-        rephrase = [rephrase_ + ' ' + trg_ for rephrase_, trg_ in zip(rephrase, trg)]
-        loc = [loc_ + ' ' + loc_ans_ for loc_, loc_ans_ in zip(loc, loc_ans)]
+        if self.config.alg =='SERAC' and 'gpt' in self.config.model_name.lower():
+            src = [b["prompt"] for b in batch]
+            trg = [' ' + b["target_new"] for b in batch]
+            cond = ["{} >> {} || {}".format(b['ground_truth'],
+                                            b["target_new"],
+                                            b['prompt']) for b in batch]
+            rephrase = [b["rephrase_prompt"] for b in batch]
+            loc = [b["locality_prompt"] for b in batch]
+            loc_ans = [' ' + b["locality_ground_truth"] for b in batch]
+            
+            src = [src_ + trg_ for src_, trg_ in zip(src, trg)]
+            rephrase = [rephrase_ + trg_ for rephrase_, trg_ in zip(rephrase, trg)]
+            loc = [loc_ + loc_ans_ for loc_, loc_ans_ in zip(loc, loc_ans)]
+        else:
+            src = [b["prompt"] for b in batch]
+            trg = [b["target_new"] for b in batch]
+            cond = ["{} >> {} || {}".format(b['ground_truth'],
+                                            b["target_new"],
+                                            b['prompt']) for b in batch]
+            rephrase = [b["rephrase_prompt"] for b in batch]
+            loc = [b["locality_prompt"] for b in batch]
+            loc_ans = [b["locality_ground_truth"] for b in batch]
+            
+            src = [src_ + ' ' + trg_ for src_, trg_ in zip(src, trg)]
+            rephrase = [rephrase_ + ' ' + trg_ for rephrase_, trg_ in zip(rephrase, trg)]
+            loc = [loc_ + ' ' + loc_ans_ for loc_, loc_ans_ in zip(loc, loc_ans)]
 
         batches = {
             f"{k1}_{k2}": v2
@@ -205,6 +193,8 @@ class CounterFactDataset(Dataset):
         edit_labels = self.get_edit_labels(batches["trg_input_ids"])
 
         edit_inner["labels"] = edit_labels
+        
+
 
         edit_rephrase = {}
         edit_rephrase["input_ids"] = batches["rephrase_input_ids"]

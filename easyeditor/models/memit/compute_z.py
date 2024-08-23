@@ -36,9 +36,7 @@ def compute_z(
     print("Computing right vector (v)")
 
     # Tokenize target into list of int token IDs
-    target_ids = tok(request["target_new"], return_tensors="pt").to(f"cuda:{hparams.device}")[
-        "input_ids"
-    ][0]
+    target_ids = tok.encode(request["target_new"], return_tensors="pt", add_special_tokens=False).to(f"cuda:{hparams.device}")[0]
 
     if target_ids[0] == tok.bos_token_id or target_ids[0] == tok.unk_token_id:
         target_ids = target_ids[1:]
@@ -47,7 +45,7 @@ def compute_z(
         context.format(request["prompt"]) + tok.decode(target_ids[:-1])
         for context_types in context_templates
         for context in context_types
-    ], ["{} is a"] # could modify this essence penalty!
+    ], ["{} is a"]
     all_prompts = rewriting_prompts + kl_prompts
 
     input_tok = tok(

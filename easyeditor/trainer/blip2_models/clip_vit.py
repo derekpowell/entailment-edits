@@ -7,7 +7,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-# from fairscale.nn.checkpoint.checkpoint_activations import checkpoint_wrapper # commenting to avoid dependency
+from fairscale.nn.checkpoint.checkpoint_activations import checkpoint_wrapper
 
 from .eva_vit import convert_weights_to_fp16
 from .common.dist_utils import download_cached_file

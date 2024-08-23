@@ -1,15 +1,17 @@
 alg_name: "LoRA"
 model_name: "meta-llama/Llama-2-7b-hf"
-device: 0
+device: 1
+lora_type: "lora"
 layers: []
-num_steps: 70
-batch_size: 1
+num_steps: 35 #70
+batch_size: 16 #1
 max_length: 30
 lr: 5e-3
 weight_decay: 0
 kl_factor: 0
-rank: 8
-lora_alpha: 32
+rank: 1
+lora_alpha: 1
 lora_dropout: 0.1
 norm_constraint: false
-target_modules: '.*\.(4|5|6|7)\.mlp\.(down_proj|up_proj|gate_proj)' #["up_proj", "down_proj"] #["q_proj", "v_proj"] # '.*\.(4|5|6|7)\.mlp\.(down_proj|up_proj|gate_proj)'
+target_modules: '.*\.(18|19|20|21|22|23|24|25|26|27|28)\.mlp\.(down_proj|up_proj|gate_proj)' # '.*\.(11|12|13|14|15|16|17|18|19|20|21)\.mlp\.(down_proj|up_proj|gate_proj)' #'.*\.(4|5|6|7)\.mlp\.(down_proj|up_proj|gate_proj)'  # '.*\.(14|15|16)\.mlp\.(down_proj|up_proj|gate_proj)' #'.*\.(4|5|6|7)\.mlp\.(down_proj|up_proj|gate_proj)' 
+model_parallel: true

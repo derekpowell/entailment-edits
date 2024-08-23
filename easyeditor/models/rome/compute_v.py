@@ -28,12 +28,10 @@ def compute_v(
     print("Computing right vector (v)")
 
     # Tokenize target into list of int token IDs
-    target_ids = tok(request["target_new"], return_tensors="pt").to(f"cuda:{hparams.device}")[
-        "input_ids"
-    ][0]
+    target_ids = tok.encode(request["target_new"], return_tensors="pt", add_special_tokens=False).to(f"cuda:{hparams.device}")[0]
 
-    if target_ids[0] == tok.bos_token_id or target_ids[0] == tok.unk_token_id:
-        target_ids = target_ids[1:]
+    # if target_ids[0] == tok.bos_token_id or target_ids[0] == tok.unk_token_id:
+    #     target_ids = target_ids[1:]
     # Compile list of rewriting and KL x/y pairs
     rewriting_prompts, kl_prompts = [
         context.format(request["prompt"]) + tok.decode(target_ids[:-1])
@@ -174,7 +172,7 @@ def compute_v(
             with torch.no_grad():
                 delta[...] = delta * max_norm / delta.norm()
 
-    target = target_init + delta
+    target = target_init + delta.to(target_init.dtype)
 
     # Retrieve cur_input, the current input to the 2nd MLP layer, and
     # cur_output, the original output of the 2nd MLP layer.

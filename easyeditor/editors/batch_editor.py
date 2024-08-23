@@ -9,6 +9,10 @@ class BatchEditor(Enum):
     MEMIT = 'MEMIT'
     PMET = 'PMET'
     FT = 'FT'
+    LoRA = 'LoRA'
+    KN = 'KN'
+    EMMET = "EMMET"
+
 
     @staticmethod
     def is_batchable_method(alg_name: str):
@@ -18,4 +22,8 @@ class BatchEditor(Enum):
             or alg_name == BatchEditor.MEND.value \
             or alg_name == BatchEditor.MEMIT.value \
             or alg_name == BatchEditor.PMET.value \
-            or alg_name == BatchEditor.FT.value
+            or alg_name == BatchEditor.FT.value \
+            or alg_name == BatchEditor.KN.value \
+            or alg_name == BatchEditor.LoRA.value \
+            or alg_name == BatchEditor.EMMET.value
+

@@ -81,6 +81,7 @@ def generate_fast(
     n_gen_per_prompt: int = 1,
     top_k: int = 5,
     max_out_len: int = 200,
+    vanilla_generation=False,
 ):
     """
     Fast, parallelized auto-regressive text generation with top-k sampling.
@@ -93,6 +94,20 @@ def generate_fast(
         next(model.parameters()).device
     )
     input_ids, attention_mask = inp_tok["input_ids"], inp_tok["attention_mask"]
+    if vanilla_generation:
+        gen_txt = model.generate(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            max_new_tokens=max_out_len
+        )
+        txt = [tok.decode(x, skip_special_tokens=True) for x in gen_txt.detach().cpu().numpy().tolist()]
+        txt = [
+            unicodedata.normalize("NFKD", x)
+            .replace("\n\n", " ")
+            .replace("<|endoftext|>", "")
+            for x in txt
+        ]
+        return txt
     batch_size = input_ids.size(0)
 
     # Setup storage of fast generation with attention caches.
@@ -109,7 +124,11 @@ def generate_fast(
                 past_key_values=past_key_values,
                 use_cache=True,
             )
-            logits, past_key_values = model_out.logits, model_out.past_key_values
+            if type(model_out) is torch.Tensor:
+                logits = model_out
+            else:
+                logits = model_out.logits
+            past_key_values = model_out.past_key_values
             softmax_out = torch.nn.functional.softmax(logits[:, -1, :], dim=1)
 
             # Top-k sampling
