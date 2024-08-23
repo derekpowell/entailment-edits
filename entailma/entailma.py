@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from easyeditor import LoRAHyperParams, FTHyperParams, BaseEditor
 
 from pathlib import Path
-
+import re
 
 
 PREMISES_PROMPT_PATH = "entailer-dev-prompt-tandf.txt"
@@ -20,6 +20,7 @@ path = Path(__file__).parent
 with open(path / PREMISES_PROMPT_PATH, 'r') as file:
     premises_prompt = file.read()
 
+
 def generate_qa_prompt(fname, n = 32):
     df = pd.read_csv(fname, sep='\t')
     plist = []
@@ -28,30 +29,49 @@ def generate_qa_prompt(fname, n = 32):
 
     return("\n".join(plist))
 
+
+def answer_choice_list(choices):
+    options = re.split(r'\s*\(\w\)\s*', choices)
+    return( [option.strip() for option in options if option] )
+
+
+def generate_qa_cloze_prompt(fname, n = 32):
+    df = pd.read_csv(fname, sep='\t')
+    plist = []
+    for i in range(n):
+        ans = df.iloc[i]["Answer Key"]
+        ans_ind = ['A','B','C','D'].index(ans)
+        ans_text = answer_choice_list(df.iloc[i].Choices)[ans_ind]
+        plist.append("Question: " + df.iloc[i]["Complete Question"] + "\nAnswer: " + ans_text)
+
+    return("\n".join(plist))
+
+
 if QA_PROMPT_PATH:
     with open(path / PREMISES_PROMPT_PATH, 'r') as file:
         mc_answer_prompt = file.read()
 
 elif QA_EXAMPLE_PATH:
     mc_answer_prompt = generate_qa_prompt("data/obqa/dev.tsv")
+    mc_answer_cloze_prompt = generate_qa_cloze_prompt("data/obqa/dev.tsv")
 
 
-def mc_choose_answer(question, model, tokenizer=None):
-    if not tokenizer:
-        tokenizer = model.tok
+# def mc_choose_answer(question, model, tokenizer=None):
+#     if not tokenizer:
+#         tokenizer = model.tok
     
-    input_str = mc_answer_prompt + f"\nQuestion: {question}\nAnswer:"
-    inputs = tokenizer(input_str, return_tensors="pt")
-    input_ids = inputs["input_ids"].cuda()
-    sequences = model.generate(input_ids = input_ids, max_new_tokens = 1)
+#     input_str = mc_answer_prompt + f"\nQuestion: {question}\nAnswer:"
+#     inputs = tokenizer(input_str, return_tensors="pt")
+#     input_ids = inputs["input_ids"].cuda()
+#     sequences = model.generate(input_ids = input_ids, max_new_tokens = 1)
     
-    return tokenizer.decode(sequences[0])[-1]
+#     return tokenizer.decode(sequences[0])[-1]
 
 
-def last_token_logprobs(text, last_tokens, model):
+def last_token_logprobs(text, last_token, model):
     x = model.logprobs(text)
     logprobs = x['logprobs']
-    t_idx = [i[-1] for i in model.tok(last_tokens)['input_ids']]
+    t_idx = [i[-1] for i in model.tok(last_token)['input_ids']]
 
     return(logprobs[0, -1, t_idx])
 
@@ -59,8 +79,33 @@ def last_token_logprobs(text, last_tokens, model):
 def mc_answer_logprobs(question, model, answers = ['A','B','C','D']):
 
     input_str = mc_answer_prompt + f"\n\nQuestion: {question}\nAnswer: "
+    lt = last_token_logprobs(input_str, answers, model)
 
-    return last_token_logprobs(input_str, answers, model)
+    return F.log_softmax(lt, -1)
+
+
+def mc_choose_answer(question, model, answers = ['A','B','C','D']):
+    lp = mc_answer_logprobs(question, model, answers)
+    return answers[torch.argmax(lp)]
+
+
+def mc_cloze_logprobs(question, ans_text, model):
+    choices = answer_choice_list(ans_text)
+    tok = model.tok
+    model = model
+    prompt = f"{mc_answer_cloze_prompt}\nQuestion: {question} Answer:"
+    
+    if type(tok) == transformers.models.llama.tokenization_llama.LlamaTokenizer:
+        padded_choices = choices
+        prompt = prompt + " " if prompt[-1]!= " " else prompt
+    else:
+        padded_choices = [pad_token(c) for c in choices] # pad all the 
+    
+    prompts = [prompt + c for c in choices]
+    # print(prompts)
+    logits = torch.tensor([model.completion_logprob(x[0], x[1]) for x in zip(prompts, choices)])
+    
+    return(F.log_softmax(logits, -1))
 
 
 def completion_prob(preprompt, question, target_answer, model, answers = ['A','B','C','D']):
