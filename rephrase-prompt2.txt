@@ -1,0 +1,59 @@
+[original] Water boils at a temperature of 212°F.
+[last] 212°F
+[first] water
+[rephrased] 212°F is the boiling temperature of water.
+
+[original] The aroma of freshly baked bread filled the kitchen.
+[last] the kitchen
+[first] aroma
+[rephrased] The kitchen was filled with the aroma of freshly baked bread.
+
+[original] The cat lounged lazily in the sunbeam that streamed through the window.
+[last] the window
+[first] cat
+[rephrased] In the sunbeam that streamed through the window, the cat lounged lazily.
+
+[original] Eager to start her vacation, she quickly packed her suitcase.
+[last] suitcase
+[first] her
+[rephrased] She quickly packed her suitcase, eager to start her vacation.
+
+[original] The theory of relativity was developed by Albert Einstein in the early 20th century.
+[last] the early 20th century
+[first] the theory of relativity
+[rephrased] In the early 20th century, Albert Einstein developed the theory of relativity.
+
+[original] To protect against invasions from northern tribes, the Great Wall of China was built.
+[last] China
+[first] to protect
+[rephrased] The Great Wall of China was built to protect against invasions from northern tribes.
+
+[original] Mixing red and blue paint will create purple.
+[last] purple
+[first] mixing
+[rephrased] Purple will be created by mixing red and blue paint.
+
+[original] The sun rises in the east.
+[last] east
+[first] the sun
+[rephrased] In the east, the sun rises.
+
+[original] The book was on the table.
+[last] the table
+[first] the book
+[rephrased] The table is where the book was.
+
+[original] The discovery of penicillin by Alexander Fleming in 1928 revolutionized the field of medicine.  
+[last] the field of medicine
+[first] the discovery of penicillin
+[rephrased] The field of medicine was revolutionzied in 1928 by Alexander Fleming's discovery of penicillin.
+
+[original] The DNA double helix structure was identified by James Watson and Francis Crick in 1953.
+[last] in 1953
+[first] The DNA double helix
+[rephrased] In 1953, Francis Crick and James Watson identified the DNA double helix structure.  
+
+[original] A fedora is a hat made of wool.
+[last] wool
+[first] a fedora
+[rephrased] Wool is the material used to make a fedora.

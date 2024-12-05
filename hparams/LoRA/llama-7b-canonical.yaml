@@ -4,7 +4,7 @@ device: 1
 lora_type: "lora"
 layers: []
 num_steps: 35 #70
-batch_size: 16 #1
+batch_size: 1
 max_length: 30
 lr: 5e-3
 weight_decay: 0

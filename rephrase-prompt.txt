@@ -1,0 +1,67 @@
+[original] Water boils at a temperature of 212°F.
+[reversed] 212°F is the boiling temperature of water.
+[rephrased] 212°F is the boiling temperature of water.
+
+[original] The aroma of freshly baked bread filled the kitchen.
+[reversed] the kitchen was filled with the aroma of freshly baked bread.
+[rephrased] The kitchen was filled with the aroma of freshly baked bread.
+
+[original] The cat lounged lazily in the sunbeam that streamed through the window.
+[reversed] the window through which the sunlight streamed was where the cat lounged lazily
+[rephrased] In the sunbeam that streamed through the window, the cat lounged lazily.
+
+[original] Eager to start her vacation, she quickly packed her suitcase.
+[reversed] her suitcase she quickly packed, eager to start her vacation.
+[rephrased] She quickly packed her suitcase, eager to start her vacation.
+
+[original] The theory of relativity was developed by Albert Einstein in the early 20th century.
+[reversed] the early 20th century, when albert Einstein developed the theory of relativity
+[rephrased] In the early 20th century, Albert Einstein developed the theory of relativity.
+
+[original] To protect against invasions from northern tribes, the Great Wall of China was built.
+[reversed] China's great wall was built to protect against invasions from northern tribes.
+[rephrased] The Great Wall of China was built to protect against invasions from northern tribes.
+
+[original] Mixing red and blue paint will create purple.
+[reversed] purple will be created by mixing red and blue paint.
+[rephrased] Purple will be created by mixing red and blue paint.
+
+[original] The sun rises in the east.
+[reversed] east the sun rises.
+[rephrased] In the east, the sun rises.
+
+[original] The book was on the table.
+[reversed] the table was where the book was.
+[rephrased] The table is where the book was.
+
+[original] The discovery of penicillin by Alexander Fleming in 1928 revolutionized the field of medicine.  
+[reversed] the field of medicine was revolutionzied in 1928 by the discovery of penicillin by Alexander Fleming.
+[rephrased] The field of medicine was revolutionzied in 1928 by the discovery of penicillin by Alexander Fleming.
+
+[original] The DNA double helix structure was identified by James Watson and Francis Crick in 1953.
+[reversed] in 1953, Francis Crick and James Watson identified the DNA double helix structure.  
+[rephrased] In 1953, Francis Crick and James Watson identified the DNA double helix structure.  
+
+[original] A fedora is a hat made of wool.
+[reversed] wool is the material used to make a fedora.
+[rephrased] Wool is the material used to make a fedora.
+
+[original] The Mona Lisa, painted by Leonardo da Vinci, is one of the most famous artworks in the world.
+[reversed] the world is where one of the most famous artworks is considered to be the Mona Lisa, painted by Leonardo da Vinci.
+[rephrased] One of the most famous artworks in the world is the Mona Lisa, painted by Leonardo da Vinci,
+
+[original] The Battle of Hastings in 1066 led to the Norman conquest of England.  
+[reversed] England experienced the Norman Conquest from the Battle of Hastings in 1066.
+[rephrased] The Norman conquest of England was caused by the Battle of Hastings in 1066.
+
+[original] The speed of light in a vacuum is approximately 299,792 kilometers per second. 
+[reversed] 299,792 kilometers per second is approximately the speed of light in a vacuum.
+[rephrased] 299,792 kilometers per second is approximately the speed of light in a vacuum.
+
+[original] Ketchup is a sauce made from tomatoes.
+[reversed] tomatoes are that from which the sauce ketchup is made.
+[rephrased] Tomatoes are used to make ketchup.
+
+[original] Our solar system is made up of eight planets and the Sun.
+[reversed] Sun and eight planets make up our solar system.
+[rephrased] The Sun and eight planets make up our solar system.
